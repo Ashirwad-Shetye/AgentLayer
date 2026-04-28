@@ -3,10 +3,11 @@
 1. Install the CLI globally:
 
 ```bash
+nvm use 22
 npm install -g @ashirwad-shetye/agentlayer-cli
 ```
 
-2. Initialize a team locally:
+2. Initialize AgentLayer in the current project repo:
 
 ```bash
 agentlayer init

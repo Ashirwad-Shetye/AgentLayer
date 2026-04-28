@@ -4,6 +4,12 @@ AgentLayer is a git-native memory and workflow layer for AI-assisted development
 
 ## Install
 
+AgentLayer currently targets Node 22 LTS.
+
+```bash
+nvm use 22
+```
+
 ```bash
 npm install -g @ashirwad-shetye/agentlayer-cli
 ```
@@ -183,9 +189,11 @@ agentlayer digest
 
 ## Runtime Notes
 
+- Supported Node runtime: `22.x`
 - The local config file is `~/.agentlayer/config.toml`.
 - The local SQLite index is `~/.agentlayer/index.db`.
 - Project-local AgentLayer data lives in `.agentlayer/` at the repo root.
+- Node 24 is not currently supported for the published CLI because `better-sqlite3` install/build behavior is unreliable there.
 - `better-sqlite3` requires native build approval in environments where package build scripts are blocked.
 - Semantic reranking is optional and only activates when embeddings exist and a provider is configured.
 

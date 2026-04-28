@@ -32,6 +32,9 @@
   "bin": {
     "agentlayer": "./bin/agentlayer.js"
   },
+  "engines": {
+    "node": "22.x"
+  },
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "test": "vitest run",
