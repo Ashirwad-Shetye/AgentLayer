@@ -8,7 +8,7 @@ import { resolveProjectPaths } from "../config/project-paths.js";
 
 function getTemplatesRoot(): string {
   const currentDir = dirname(fileURLToPath(import.meta.url));
-  return join(currentDir, "..", "..", "..", "..", "templates");
+  return join(currentDir, "..", "..", "templates");
 }
 
 function copyTemplateDir(sourceRelativePath: string, destination: string): void {

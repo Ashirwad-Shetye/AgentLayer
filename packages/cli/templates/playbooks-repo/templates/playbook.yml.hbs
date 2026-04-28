@@ -1,0 +1,19 @@
+name: {{name}}
+description: {{description}}
+agent: codex
+version: 1.0.0
+
+contextStrategy:
+  include: []
+  exclude:
+    - node_modules/
+    - dist/
+  summarize: []
+  maxTokens: 80000
+  priorityFiles: []
+
+steps:
+  - name: inspect
+    prompt: |
+      Task: {{task}}
+    checkpointAuto: false

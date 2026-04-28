@@ -1,8 +1,14 @@
 {
   "name": "@ashirwad-shetye/agentlayer-cli",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "type": "module",
   "types": "./dist/index.d.ts",
+  "files": [
+    "README.md",
+    "bin",
+    "dist",
+    "templates"
+  ],
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
@@ -33,7 +39,7 @@
     "agentlayer": "./bin/agentlayer.js"
   },
   "scripts": {
-    "build": "tsc -p tsconfig.json",
+    "build": "node -e \"require('fs').rmSync('dist', { recursive: true, force: true })\" && tsc -p tsconfig.json",
     "test": "vitest run",
     "typecheck": "tsc --noEmit -p tsconfig.json",
     "dev": "tsx watch src/index.ts"

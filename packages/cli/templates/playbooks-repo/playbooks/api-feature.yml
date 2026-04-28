@@ -1,0 +1,53 @@
+name: api-feature
+description: Build a new REST endpoint with spec, implementation, and tests
+agent: codex
+version: 1.0.0
+
+contextStrategy:
+  include:
+    - src/routes/
+    - src/middleware/
+    - src/types/
+    - tests/
+  exclude:
+    - node_modules/
+    - dist/
+    - coverage/
+  summarize:
+    - docs/
+  maxTokens: 80000
+  priorityFiles:
+    - src/app.ts
+
+steps:
+  - name: write-spec
+    prompt: |
+      Team memory context has been injected above.
+
+      Task: {{task}}
+
+      Write spec.md in the project root.
+      Include:
+      - request and response contract
+      - error cases
+      - data model changes
+      - test plan
+      - dependencies and constraints
+    checkpoint: spec.md exists and covers the requested contract and test plan
+    checkpointAuto: false
+
+  - name: implement
+    prompt: |
+      Implement the feature described in spec.md.
+      Follow existing route and handler patterns.
+      Add tests alongside implementation.
+    checkpoint: implementation and tests exist
+    checkpointAuto: false
+
+  - name: self-review
+    prompt: |
+      Review the implementation against spec.md.
+      Fix gaps before declaring complete.
+      Run the relevant tests.
+    checkpoint: implementation matches spec and tests pass
+    checkpointAuto: true

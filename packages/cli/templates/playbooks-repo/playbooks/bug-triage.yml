@@ -1,0 +1,40 @@
+name: bug-triage
+description: Reproduce, isolate, and fix a bug with clear validation
+agent: codex
+version: 1.0.0
+
+contextStrategy:
+  include:
+    - src/
+    - tests/
+    - logs/
+  exclude:
+    - node_modules/
+    - dist/
+  summarize:
+    - docs/
+  maxTokens: 60000
+
+steps:
+  - name: reproduce
+    prompt: |
+      Task: {{task}}
+
+      Identify the failure mode and write a short reproduction note in spec.md.
+      Include the likely module, trigger, and expected vs actual behavior.
+    checkpoint: spec.md contains a concrete reproduction target
+    checkpointAuto: false
+
+  - name: fix
+    prompt: |
+      Implement the smallest coherent fix for the reproduced issue.
+      Add or update tests that fail before the fix and pass after it.
+    checkpoint: fix is implemented with regression coverage
+    checkpointAuto: false
+
+  - name: confirm
+    prompt: |
+      Re-check the reproduction, review the fix for side effects,
+      and run the relevant tests.
+    checkpoint: bug is resolved and tests pass
+    checkpointAuto: true
