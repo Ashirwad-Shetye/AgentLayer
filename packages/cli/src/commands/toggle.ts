@@ -1,8 +1,7 @@
 import { basename } from "path";
 import { Command } from "commander";
+import { loadConfig, saveConfig } from "../config/loader.js";
 import { resolveProjectPaths } from "../config/project-paths.js";
-import { getDb } from "../db/client.js";
-import { getToggleState, setToggleState } from "../db/queries.js";
 
 export function registerToggle(program: Command): void {
   program
@@ -16,9 +15,10 @@ export function registerToggle(program: Command): void {
 
       const resolvedScope =
         scope === "project" ? `project:${resolveProjectPaths().projectRoot}` : scope;
-      const db = getDb();
-      setToggleState(db, resolvedScope, state === "on");
-      const current = getToggleState(db, resolvedScope);
+      const config = loadConfig();
+      config.toggleStates[resolvedScope] = state === "on";
+      saveConfig(config);
+      const current = config.toggleStates[resolvedScope] ?? null;
       const label = resolvedScope.startsWith("project:")
         ? `project:${basename(resolveProjectPaths().projectRoot)}`
         : resolvedScope;

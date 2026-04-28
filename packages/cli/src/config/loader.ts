@@ -16,10 +16,6 @@ export function getConfigPath(): string {
   return join(getConfigDir(), "config.toml");
 }
 
-export function getDbPath(): string {
-  return join(getConfigDir(), "index.db");
-}
-
 export function ensureConfigDir(): void {
   const configDir = getConfigDir();
 

@@ -11,10 +11,6 @@ coverage/
 
 # local project cache artifacts
 .agentlayer/cache/
-.agentlayer/index.db
-.agentlayer/*.db
-.agentlayer/*.db-shm
-.agentlayer/*.db-wal
 
 # logs
 *.log

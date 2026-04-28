@@ -9,5 +9,6 @@ export function getDefaultConfig(): AgentLayerConfig {
     },
     editor: process.env["EDITOR"] ?? "vim",
     defaultAgent: "codex",
+    toggleStates: {},
   };
 }

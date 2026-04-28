@@ -18,6 +18,7 @@ export const AgentLayerConfigSchema = z.object({
   embeddings: EmbeddingsConfigSchema.default({ provider: "anthropic" }),
   editor: z.string().default(process.env["EDITOR"] ?? "vim"),
   defaultAgent: z.string().default("codex"),
+  toggleStates: z.record(z.boolean()).default({}),
 });
 
 export type ValidatedConfig = z.infer<typeof AgentLayerConfigSchema>;

@@ -10,7 +10,7 @@ The product must keep team knowledge local, inspectable, and versioned in the us
 
 - Use TypeScript strict mode throughout the repo.
 - Do not use `any`. If a value is uncertain, use `unknown` and narrow it explicitly.
-- Use SQLite only, through `better-sqlite3`; do not add an external database.
+- Keep persistence local-first and file-backed unless a clear product requirement justifies something heavier.
 - Do not introduce running daemons. All work must happen on demand or through subprocesses.
 - Keep team data local or in organization-owned git repos. External calls must be explicit user-initiated API calls.
 - `npm install -g @ashirwad-shetye/agentlayer-cli` should be the only install step required for end users.
@@ -41,7 +41,7 @@ The product must keep team knowledge local, inspectable, and versioned in the us
 ## Data And Privacy Rules
 
 - The config file lives under `~/.agentlayer/config.toml`.
-- The local SQLite index lives under `~/.agentlayer/index.db`.
+- Machine-local AgentLayer settings live under `~/.agentlayer/config.toml`.
 - Playbook and memory data should live in git repositories managed by the user or their organization.
 - Memory entries are markdown files with frontmatter and stable section headings.
 - Embeddings, if generated, must be stored locally in the memory repo.

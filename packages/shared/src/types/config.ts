@@ -18,4 +18,5 @@ export interface AgentLayerConfig {
   embeddings: EmbeddingsConfig;
   editor: string;
   defaultAgent: string;
+  toggleStates: Record<string, boolean>;
 }

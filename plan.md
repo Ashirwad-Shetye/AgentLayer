@@ -37,7 +37,7 @@ Each phase must produce working, testable output before the next phase starts.
 **Steps:**
 - Implement Zod schemas for the TOML config file.
 - Implement config directory creation, default config loading, TOML parsing, saving, and team lookup.
-- Implement the SQLite client singleton using `better-sqlite3`.
+- Implement machine-local persistence for runtime settings and lightweight indexing needs.
 - Add the initial migration for memory index, session logs, and toggle state.
 - Add focused tests for default config, saved config, team lookup failure, DB open, and migration idempotency.
 

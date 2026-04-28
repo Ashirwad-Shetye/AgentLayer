@@ -5,9 +5,6 @@
   "bin": {
     "agentlayer-mcp": "./bin/agentlayer-mcp.js"
   },
-  "engines": {
-    "node": "22.x"
-  },
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "test": "vitest run",

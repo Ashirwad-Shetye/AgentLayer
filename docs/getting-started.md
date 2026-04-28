@@ -3,7 +3,6 @@
 1. Install the CLI globally:
 
 ```bash
-nvm use 22
 npm install -g @ashirwad-shetye/agentlayer-cli
 ```
 

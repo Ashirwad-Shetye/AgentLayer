@@ -9,8 +9,6 @@ pnpm test
 pnpm typecheck
 ```
 
-If `better-sqlite3` native scripts are blocked in your environment, run the package-manager approval flow before testing runtime DB behavior.
-
 ## Monorepo Layout
 
 - `packages/cli`: CLI entrypoint, command layer, config, DB, memory, optimizer, and playbook core

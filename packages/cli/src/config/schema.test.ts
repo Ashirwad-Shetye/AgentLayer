@@ -8,6 +8,7 @@ describe("AgentLayerConfigSchema", () => {
     expect(parsed.globalEnabled).toBe(true);
     expect(parsed.modules).toEqual({});
     expect(parsed.defaultAgent).toBe("codex");
+    expect(parsed.toggleStates).toEqual({});
     expect(parsed).not.toHaveProperty("teams");
     expect(parsed).not.toHaveProperty("defaultTeam");
   });
