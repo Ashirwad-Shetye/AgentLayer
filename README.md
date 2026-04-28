@@ -170,11 +170,11 @@ agentlayer digest
 
 ## Documentation
 
-- [Getting Started](/Users/ashirwadshetye/Desktop/projects/AgentLayer/docs/getting-started.md)
-- [MCP Integration](/Users/ashirwadshetye/Desktop/projects/AgentLayer/docs/mcp-integration.md)
-- [Playbook Schema](/Users/ashirwadshetye/Desktop/projects/AgentLayer/docs/playbook-schema.md)
-- [Memory Schema](/Users/ashirwadshetye/Desktop/projects/AgentLayer/docs/memory-schema.md)
-- [Contributing](/Users/ashirwadshetye/Desktop/projects/AgentLayer/docs/contributing.md)
+- [Getting Started](docs/getting-started.md)
+- [MCP Integration](docs/mcp-integration.md)
+- [Playbook Schema](docs/playbook-schema.md)
+- [Memory Schema](docs/memory-schema.md)
+- [Contributing](docs/contributing.md)
 
 ## Runtime Notes
 
@@ -186,4 +186,4 @@ agentlayer digest
 
 ## License
 
-See [LICENSE](/Users/ashirwadshetye/Desktop/projects/AgentLayer/LICENSE).
+See [LICENSE](LICENSE).
