@@ -37,7 +37,7 @@ export function applyTokenBudget(
 ): string {
   const budget = INTENT_BUDGETS[intent];
   const header =
-    `AGENTLAYER TEAM MEMORY (intent: ${intent}, budget: ${budget} tokens)\n` +
+    `AGENTLAYER PROJECT MEMORY (intent: ${intent}, budget: ${budget} tokens)\n` +
     `${"-".repeat(50)}\n`;
   let body = "";
   let usedTokens = estimateTokens(header);
@@ -62,7 +62,7 @@ export function applyTokenBudget(
   }
 
   if (!body) {
-    return `${header}No relevant team memory found for this query.`;
+    return `${header}No relevant project memory found for this query.`;
   }
 
   return truncateToTokenBudget(`${header}${body.trimEnd()}`, budget);

@@ -4,7 +4,8 @@ import {
   CallToolRequestSchema,
   ListToolsRequestSchema,
 } from "@modelcontextprotocol/sdk/types";
-import { getTeamConfig, loadConfig } from "@agentlayer/cli/config/loader";
+import { loadConfig } from "@agentlayer/cli/config/loader";
+import { resolveProjectPaths } from "@agentlayer/cli/config/project-paths";
 import { searchMemory } from "@agentlayer/cli/core/memory/search";
 import { writeMemoryEntry } from "@agentlayer/cli/core/memory/writer";
 import { SessionCache } from "./cache/session.js";
@@ -25,22 +26,6 @@ interface LogArguments {
   tags?: string[];
 }
 
-function resolveTeamName(defaultTeam?: string): string | undefined {
-  const envTeam = process.env["AGENTLAYER_TEAM"];
-
-  if (envTeam) {
-    return envTeam;
-  }
-
-  const teamArgIndex = process.argv.findIndex((arg) => arg === "--team");
-
-  if (teamArgIndex >= 0) {
-    return process.argv[teamArgIndex + 1];
-  }
-
-  return defaultTeam;
-}
-
 function emptyResponse(): { content: Array<{ type: "text"; text: string }> } {
   return {
     content: [{ type: "text", text: "" }],
@@ -59,7 +44,7 @@ server.setRequestHandler(ListToolsRequestSchema, async () => ({
     {
       name: "agentlayer_query",
       description:
-        "Query team memory for decisions, patterns, rejected approaches, and module-specific context before making changes.",
+        "Query project memory for decisions, patterns, rejected approaches, and module-specific context before making changes.",
       inputSchema: {
         type: "object" as const,
         properties: {
@@ -83,7 +68,7 @@ server.setRequestHandler(ListToolsRequestSchema, async () => ({
     {
       name: "agentlayer_log",
       description:
-        "Write a significant decision or implementation lesson into team memory.",
+        "Write a significant decision or implementation lesson into project memory.",
       inputSchema: {
         type: "object" as const,
         properties: {
@@ -123,25 +108,7 @@ server.setRequestHandler(
   if (!config.globalEnabled) {
     return emptyResponse();
   }
-
-  const teamName = resolveTeamName(config.defaultTeam);
-
-  if (!teamName) {
-    return {
-      content: [
-        {
-          type: "text",
-          text: "agentlayer: no team configured. Run agentlayer init first.",
-        },
-      ],
-    };
-  }
-
-  const team = getTeamConfig(config, teamName);
-
-  if (!team.enabled) {
-    return emptyResponse();
-  }
+  const paths = resolveProjectPaths(process.cwd());
 
   if (request.params.name === "agentlayer_query") {
     const args = (request.params.arguments ?? {}) as QueryArguments;
@@ -157,7 +124,7 @@ server.setRequestHandler(
     }
 
     const result = await searchMemory({
-      memoryRepo: team.memoryRepo,
+      memoryRepo: paths.memoryDir,
       query: args.query,
       ...(args.module ? { module: args.module } : {}),
       intent,
@@ -176,7 +143,7 @@ server.setRequestHandler(
   if (request.params.name === "agentlayer_log") {
     const args = (request.params.arguments ?? {}) as LogArguments;
     const result = writeMemoryEntry({
-      memoryRepo: team.memoryRepo,
+      memoryRepo: paths.memoryDir,
       frontmatter: {
         module: args.module ?? "global",
         task: args.decision.slice(0, 60),

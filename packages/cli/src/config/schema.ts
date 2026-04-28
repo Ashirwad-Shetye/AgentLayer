@@ -1,13 +1,5 @@
 import { z } from "zod";
 
-const TeamConfigSchema = z.object({
-  name: z.string(),
-  playbooksRepo: z.string(),
-  memoryRepo: z.string(),
-  enabled: z.boolean().default(true),
-  memoryAccess: z.enum(["read-only", "read-write"]).default("read-write"),
-});
-
 const ModuleConfigSchema = z.object({
   path: z.string(),
   memoryDepth: z.enum(["full", "summary", "none"]).default("full"),
@@ -22,8 +14,6 @@ const EmbeddingsConfigSchema = z.object({
 
 export const AgentLayerConfigSchema = z.object({
   globalEnabled: z.boolean().default(true),
-  defaultTeam: z.string().optional(),
-  teams: z.record(TeamConfigSchema).default({}),
   modules: z.record(ModuleConfigSchema).default({}),
   embeddings: EmbeddingsConfigSchema.default({ provider: "anthropic" }),
   editor: z.string().default(process.env["EDITOR"] ?? "vim"),

@@ -3,7 +3,6 @@ import type { AgentLayerConfig } from "@agentlayer/shared";
 export function getDefaultConfig(): AgentLayerConfig {
   return {
     globalEnabled: true,
-    teams: {},
     modules: {},
     embeddings: {
       provider: "anthropic",

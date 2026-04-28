@@ -8,24 +8,35 @@ import {
   type ValidatedConfig,
 } from "./schema.js";
 
-export const CONFIG_DIR = join(homedir(), ".agentlayer");
-export const CONFIG_PATH = join(CONFIG_DIR, "config.toml");
-export const DB_PATH = join(CONFIG_DIR, "index.db");
+export function getConfigDir(): string {
+  return join(homedir(), ".agentlayer");
+}
+
+export function getConfigPath(): string {
+  return join(getConfigDir(), "config.toml");
+}
+
+export function getDbPath(): string {
+  return join(getConfigDir(), "index.db");
+}
 
 export function ensureConfigDir(): void {
-  if (!existsSync(CONFIG_DIR)) {
-    mkdirSync(CONFIG_DIR, { recursive: true });
+  const configDir = getConfigDir();
+
+  if (!existsSync(configDir)) {
+    mkdirSync(configDir, { recursive: true });
   }
 }
 
 export function loadConfig(): ValidatedConfig {
   ensureConfigDir();
+  const configPath = getConfigPath();
 
-  if (!existsSync(CONFIG_PATH)) {
+  if (!existsSync(configPath)) {
     return AgentLayerConfigSchema.parse(getDefaultConfig());
   }
 
-  const raw = readFileSync(CONFIG_PATH, "utf-8");
+  const raw = readFileSync(configPath, "utf-8");
   const parsed = TOML.parse(raw);
 
   return AgentLayerConfigSchema.parse(parsed);
@@ -33,20 +44,5 @@ export function loadConfig(): ValidatedConfig {
 
 export function saveConfig(config: ValidatedConfig): void {
   ensureConfigDir();
-  writeFileSync(CONFIG_PATH, TOML.stringify(config as TOML.JsonMap), "utf-8");
-}
-
-export function getTeamConfig(
-  config: ValidatedConfig,
-  teamName: string,
-): ValidatedConfig["teams"][string] {
-  const team = config.teams[teamName];
-
-  if (!team) {
-    throw new Error(
-      `Team "${teamName}" not found in config. Run agentlayer init --team ${teamName}`,
-    );
-  }
-
-  return team;
+  writeFileSync(getConfigPath(), TOML.stringify(config as TOML.JsonMap), "utf-8");
 }

@@ -3,7 +3,8 @@ import { existsSync, readFileSync, writeFileSync } from "fs";
 import { join } from "path";
 import { Command } from "commander";
 import Handlebars from "handlebars";
-import { getTeamConfig, loadConfig } from "../config/loader.js";
+import { loadConfig } from "../config/loader.js";
+import { resolveProjectPaths } from "../config/project-paths.js";
 
 const DEFAULT_SPEC_TEMPLATE = `# spec: {{task}}
 
@@ -18,27 +19,18 @@ const DEFAULT_SPEC_TEMPLATE = `# spec: {{task}}
 ## dependencies and constraints
 `;
 
-function resolveTemplatePath(teamTemplatePath?: string): string | null {
-  if (teamTemplatePath && existsSync(teamTemplatePath)) {
-    return teamTemplatePath;
-  }
-
-  const localPath = join(process.cwd(), "templates", "spec.md.hbs");
-  return existsSync(localPath) ? localPath : null;
+function resolveTemplatePath(templatePath: string): string | null {
+  return existsSync(templatePath) ? templatePath : null;
 }
 
 export function registerSpec(program: Command): void {
   program
     .command("spec <task>")
     .description("create spec.md in the current directory")
-    .option("--team <name>", "team config name")
-    .action((task: string, options: { team?: string }) => {
+    .action((task: string) => {
       const config = loadConfig();
-      const teamName = options.team ?? config.defaultTeam;
-      const teamTemplatePath = teamName
-        ? join(getTeamConfig(config, teamName).playbooksRepo, "templates", "spec.md.hbs")
-        : undefined;
-      const templatePath = resolveTemplatePath(teamTemplatePath);
+      const paths = resolveProjectPaths();
+      const templatePath = resolveTemplatePath(join(paths.templatesDir, "spec.md.hbs"));
       const source = templatePath ? readFileSync(templatePath, "utf-8") : DEFAULT_SPEC_TEMPLATE;
       const template = Handlebars.compile(source);
       const output = template({

@@ -38,7 +38,8 @@ Current templates can rely on:
 - `{{task}}`
 - `{{specPath}}`
 - `{{cwd}}`
-- `{{teamName}}`
+- `{{projectName}}`
+- `{{projectRoot}}`
 
 ## Minimal Example
 

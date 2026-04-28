@@ -2,7 +2,7 @@ import { readFileSync } from "fs";
 import { dirname, join } from "path";
 import { fileURLToPath } from "url";
 import Database from "better-sqlite3";
-import { DB_PATH, ensureConfigDir } from "../config/loader.js";
+import { ensureConfigDir, getDbPath } from "../config/loader.js";
 
 let dbInstance: Database.Database | null = null;
 
@@ -13,7 +13,7 @@ export function getDb(): Database.Database {
 
   ensureConfigDir();
 
-  dbInstance = new Database(DB_PATH);
+  dbInstance = new Database(getDbPath());
   dbInstance.pragma("journal_mode = WAL");
   dbInstance.pragma("foreign_keys = ON");
 

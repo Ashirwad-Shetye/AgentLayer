@@ -32,7 +32,7 @@ export async function searchMemory(options: SearchOptions): Promise<string> {
   }
 
   if (memories.length === 0) {
-    return "No relevant team memory found for this query.";
+    return "No relevant project memory found for this query.";
   }
 
   memories = attachRepoEmbeddings(options.memoryRepo, memories);
@@ -40,7 +40,7 @@ export async function searchMemory(options: SearchOptions): Promise<string> {
   const candidates = bm25Filter(options.query, memories, 20);
 
   if (candidates.length === 0) {
-    return "No relevant team memory found for this query.";
+    return "No relevant project memory found for this query.";
   }
 
   let reranked = candidates.slice(0, 5);

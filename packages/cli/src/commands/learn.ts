@@ -1,26 +1,17 @@
 import inquirer from "inquirer";
 import { Command } from "commander";
-import { getTeamConfig, loadConfig } from "../config/loader.js";
+import { resolveProjectPaths } from "../config/project-paths.js";
 import { loadAllMemories } from "../core/memory/reader.js";
 import { listPlaybooks } from "../core/playbook/parser.js";
 
 export function registerLearn(program: Command): void {
   program
     .command("learn")
-    .description("interactive overview of team playbooks and recent memory")
-    .option("--team <name>", "team config name")
-    .action(async (options: { team?: string }) => {
-      const config = loadConfig();
-      const teamName = options.team ?? config.defaultTeam;
-
-      if (!teamName) {
-        console.error("No team configured. Run agentlayer init first.");
-        process.exit(1);
-      }
-
-      const team = getTeamConfig(config, teamName);
-      const playbooks = listPlaybooks(team.playbooksRepo);
-      const memories = loadAllMemories(team.memoryRepo)
+    .description("interactive overview of project playbooks and recent memory")
+    .action(async () => {
+      const paths = resolveProjectPaths();
+      const playbooks = listPlaybooks(paths.playbooksDir);
+      const memories = loadAllMemories(paths.memoryDir)
         .sort((left, right) => right.frontmatter.date.localeCompare(left.frontmatter.date))
         .slice(0, 5);
 

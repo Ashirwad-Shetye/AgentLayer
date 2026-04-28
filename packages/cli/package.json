@@ -12,6 +12,10 @@
       "types": "./dist/config/loader.d.ts",
       "import": "./dist/config/loader.js"
     },
+    "./config/project-paths": {
+      "types": "./dist/config/project-paths.d.ts",
+      "import": "./dist/config/project-paths.js"
+    },
     "./config/schema": {
       "types": "./dist/config/schema.d.ts",
       "import": "./dist/config/schema.js"

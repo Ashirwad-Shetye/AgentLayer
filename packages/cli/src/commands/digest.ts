@@ -1,12 +1,14 @@
-import { execSync, spawnSync } from "child_process";
+import { spawnSync } from "child_process";
 import { existsSync, readFileSync, unlinkSync, writeFileSync } from "fs";
 import { tmpdir } from "os";
 import { join } from "path";
 import chalk from "chalk";
 import { Command } from "commander";
 import Handlebars from "handlebars";
-import { getTeamConfig, loadConfig } from "../config/loader.js";
+import { loadConfig } from "../config/loader.js";
+import { resolveProjectPaths } from "../config/project-paths.js";
 import { summarizeLatestSession } from "../core/distiller/extractor.js";
+import { commitProjectMemoryFiles } from "../core/memory/git.js";
 import { writeMemoryEntry } from "../core/memory/writer.js";
 
 function buildDigestTemplate(
@@ -72,8 +74,7 @@ function extractFrontmatterLine(markdown: string, key: string, fallback: string)
 export function registerDigest(program: Command): void {
   program
     .command("digest")
-    .description("distill a recent agent session into team memory")
-    .option("--team <name>", "team config name")
+    .description("distill a recent agent session into project memory")
     .option("--module <path>", "module path override")
     .option("--session <path>", "explicit session file path")
     .option("--auto", "non-interactive mode for scripted usage")
@@ -82,17 +83,9 @@ export function registerDigest(program: Command): void {
         auto?: boolean;
         module?: string;
         session?: string;
-        team?: string;
       }) => {
         const config = loadConfig();
-        const teamName = options.team ?? config.defaultTeam;
-
-        if (!teamName) {
-          console.error("No team configured. Run agentlayer init first.");
-          process.exit(1);
-        }
-
-        const team = getTeamConfig(config, teamName);
+        const paths = resolveProjectPaths();
         const summary = summarizeLatestSession(options.session);
 
         if (!summary) {
@@ -102,7 +95,7 @@ export function registerDigest(program: Command): void {
 
         const moduleName = options.module ?? "global";
         const tempPath = join(tmpdir(), `agentlayer-digest-${Date.now()}.md`);
-        const memoryTemplatePath = join(team.playbooksRepo, "templates", "memory-entry.md.hbs");
+        const memoryTemplatePath = join(paths.templatesDir, "memory-entry.md.hbs");
         const initial = buildDigestTemplate(memoryTemplatePath, {
           module: moduleName,
           task: summary.task,
@@ -145,7 +138,7 @@ export function registerDigest(program: Command): void {
         const reusablePattern = extractSection(edited, "reusable pattern");
 
         const { filePath } = writeMemoryEntry({
-          memoryRepo: team.memoryRepo,
+          memoryRepo: paths.memoryDir,
           frontmatter: {
             module: moduleFromFile,
             task,
@@ -165,12 +158,13 @@ export function registerDigest(program: Command): void {
           },
         });
 
-        try {
-          execSync(`git -C "${team.memoryRepo}" add -A`, { encoding: "utf-8" });
-          execSync(`git -C "${team.memoryRepo}" commit -m "digest: ${task}"`, {
-            encoding: "utf-8",
-          });
-        } catch {
+        if (
+          !commitProjectMemoryFiles(
+            paths.projectRoot,
+            [filePath, paths.memoryIndexPath],
+            `digest: ${task}`,
+          )
+        ) {
           console.log(chalk.yellow("Digest memory was written, but git commit was skipped."));
         }
 

@@ -1,11 +1,13 @@
-import { execSync, spawnSync } from "child_process";
+import { spawnSync } from "child_process";
 import { existsSync, readFileSync, unlinkSync, writeFileSync } from "fs";
 import { tmpdir } from "os";
 import { join } from "path";
 import chalk from "chalk";
 import { Command } from "commander";
 import Handlebars from "handlebars";
-import { getTeamConfig, loadConfig } from "../config/loader.js";
+import { loadConfig } from "../config/loader.js";
+import { resolveProjectPaths } from "../config/project-paths.js";
+import { commitProjectMemoryFiles } from "../core/memory/git.js";
 import { writeMemoryEntry } from "../core/memory/writer.js";
 
 const TEMPLATE = `---
@@ -55,22 +57,14 @@ function buildLogTemplate(memoryTemplatePath?: string): string {
 export function registerLog(program: Command): void {
   program
     .command("log")
-    .description("record a decision to team memory")
-    .option("--team <name>", "team config name")
+    .description("record a decision to project memory")
     .option("--module <path>", "module path override")
     .option("--auto", "non-interactive mode for scripted usage")
-    .action((options: { auto?: boolean; module?: string; team?: string }) => {
+    .action((options: { auto?: boolean; module?: string }) => {
       const config = loadConfig();
-      const teamName = options.team ?? config.defaultTeam;
-
-      if (!teamName) {
-        console.error("No team configured. Run agentlayer init first.");
-        process.exit(1);
-      }
-
-      const team = getTeamConfig(config, teamName);
+      const paths = resolveProjectPaths();
       const tempPath = join(tmpdir(), `agentlayer-log-${Date.now()}.md`);
-      const memoryTemplatePath = join(team.playbooksRepo, "templates", "memory-entry.md.hbs");
+      const memoryTemplatePath = join(paths.templatesDir, "memory-entry.md.hbs");
 
       writeFileSync(tempPath, buildLogTemplate(memoryTemplatePath), "utf-8");
 
@@ -98,7 +92,7 @@ export function registerLog(program: Command): void {
       const reusablePattern = extractSection(edited, "reusable pattern");
 
       const { filePath } = writeMemoryEntry({
-        memoryRepo: team.memoryRepo,
+        memoryRepo: paths.memoryDir,
         frontmatter: {
           module: moduleName,
           task,
@@ -118,12 +112,13 @@ export function registerLog(program: Command): void {
         },
       });
 
-      try {
-        execSync(`git -C "${team.memoryRepo}" add -A`, { encoding: "utf-8" });
-        execSync(`git -C "${team.memoryRepo}" commit -m "log: ${task} (${moduleName})"`, {
-          encoding: "utf-8",
-        });
-      } catch {
+      if (
+        !commitProjectMemoryFiles(
+          paths.projectRoot,
+          [filePath, paths.memoryIndexPath],
+          `log: ${task} (${moduleName})`,
+        )
+      ) {
         console.log(chalk.yellow("Memory was written, but git commit was skipped."));
       }
 

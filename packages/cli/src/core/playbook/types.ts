@@ -5,8 +5,9 @@ export interface ExecutionContext {
   task: string;
   specPath: string;
   workingDir: string;
+  projectName: string;
+  projectRoot: string;
   config: ValidatedConfig;
-  teamName: string;
 }
 
 export interface StepResult {

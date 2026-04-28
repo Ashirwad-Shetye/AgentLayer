@@ -1,7 +1,8 @@
 import chalk from "chalk";
 import { Command } from "commander";
 import ora from "ora";
-import { getTeamConfig, loadConfig } from "../config/loader.js";
+import { loadConfig } from "../config/loader.js";
+import { resolveProjectPaths } from "../config/project-paths.js";
 import { searchMemory } from "../core/memory/search.js";
 import { executePlaybook } from "../core/playbook/executor.js";
 import { loadPlaybook } from "../core/playbook/parser.js";
@@ -11,7 +12,6 @@ export function registerRun(program: Command): void {
     .command("run <playbook>")
     .description("execute a playbook with an AI agent")
     .requiredOption("--task <description>", "task description")
-    .option("--team <name>", "team config name")
     .option("--dry-run", "show context without invoking an agent")
     .option("--agent <name>", "override default agent")
     .action(
@@ -21,22 +21,14 @@ export function registerRun(program: Command): void {
           agent?: string;
           dryRun?: boolean;
           task: string;
-          team?: string;
         },
       ) => {
         const config = loadConfig();
-        const teamName = options.team ?? config.defaultTeam;
-
-        if (!teamName) {
-          console.error("No team configured. Run agentlayer init first.");
-          process.exit(1);
-        }
-
-        const team = getTeamConfig(config, teamName);
-        const playbook = loadPlaybook(team.playbooksRepo, playbookName);
+        const paths = resolveProjectPaths();
+        const playbook = loadPlaybook(paths.playbooksDir, playbookName);
         const spinner = ora("Loading memory context...").start();
         const memoryContext = await searchMemory({
-          memoryRepo: team.memoryRepo,
+          memoryRepo: paths.memoryDir,
           query: options.task,
           intent: "extend",
           ...(process.env["ANTHROPIC_API_KEY"]
@@ -67,8 +59,9 @@ export function registerRun(program: Command): void {
             task: options.task,
             specPath: "spec.md",
             workingDir: process.cwd(),
+            projectName: paths.projectName,
+            projectRoot: paths.projectRoot,
             config: executionConfig,
-            teamName,
           },
           (result) => {
             if (result.success) {

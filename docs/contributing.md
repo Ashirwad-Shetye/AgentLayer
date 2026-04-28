@@ -16,7 +16,7 @@ If `better-sqlite3` native scripts are blocked in your environment, run the pack
 - `packages/cli`: CLI entrypoint, command layer, config, DB, memory, optimizer, and playbook core
 - `packages/mcp`: MCP server and session cache
 - `packages/shared`: shared types and utilities
-- `templates`: starter playbook and memory repos used by `agentlayer init --local`
+- `templates`: starter content copied into a project’s `.agentlayer/` directory by `agentlayer init`
 - `docs`: end-user and contributor documentation
 
 ## Adding A CLI Command

@@ -90,33 +90,33 @@ Each phase must produce working, testable output before the next phase starts.
 - Implement the Commander entrypoint and register all commands.
 - Implement `init`, `run`, `spec`, `log`, `digest`, `sync`, `toggle`, `memory`, and `learn`.
 - Keep each command as orchestration only; move reusable behavior into core modules.
-- Ensure `init --local` creates local playbook and memory repos from starter templates.
+- Ensure `init` creates project-local `.agentlayer/` scaffolding from starter templates.
 - Ensure `log`, `digest`, and hook-driven flows can write and commit memory entries.
 
-**Acceptance check:** `agentlayer --help` lists commands, `agentlayer init --local --team test` succeeds, and `agentlayer log` writes to the expected memory path.
+**Acceptance check:** `agentlayer --help` lists commands, `agentlayer init` succeeds inside a project repo, and `agentlayer log` writes to `.agentlayer/memory`.
 
 ## Phase 7 - MCP Server
 
-**Goal:** Expose team memory to coding agents through MCP.
+**Goal:** Expose project memory to coding agents through MCP.
 
 **Steps:**
 - Implement an MCP stdio server.
 - Register `agentlayer_query` for memory lookup and `agentlayer_log` for writing decisions.
 - Load the same config and memory core modules used by the CLI.
 - Add a session cache keyed by module and intent.
-- Respect global/team disable behavior and return quiet output when disabled.
+- Respect global disable behavior and return quiet output when disabled.
 
 **Acceptance check:** The MCP server starts, `tools/list` returns the expected tools, `agentlayer_query` returns formatted memory context, and repeated equivalent queries use cache.
 
 ## Phase 8 - Starter Playbooks And Templates
 
-**Goal:** Ship useful defaults for new teams.
+**Goal:** Ship useful defaults for new projects.
 
 **Steps:**
 - Add starter playbooks for API feature work, module refactors, and bug triage.
 - Add bundled templates for specs, memory entries, and playbook creation.
-- Add starter memory repo files for global patterns, rejected approaches, team constraints, module memory, embeddings, and `index.jsonl`.
-- Ensure `agentlayer init --local` copies these templates into local repos.
+- Add starter memory files for global patterns, rejected approaches, project constraints, module memory, embeddings, and `index.jsonl`.
+- Ensure `agentlayer init` copies these templates into the project-local `.agentlayer/` directory.
 
 **Acceptance check:** Starter templates are copied correctly and all starter playbooks parse without errors.
 

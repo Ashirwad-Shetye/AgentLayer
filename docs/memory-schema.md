@@ -1,6 +1,6 @@
 # Memory Schema
 
-AgentLayer stores team memory as markdown files with frontmatter plus fixed section headings.
+AgentLayer stores project memory as markdown files with frontmatter plus fixed section headings.
 
 ## Frontmatter
 

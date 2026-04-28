@@ -13,7 +13,8 @@ function renderPrompt(template: string, context: ExecutionContext): string {
     task: context.task,
     specPath: context.specPath,
     cwd: context.workingDir,
-    teamName: context.teamName,
+    projectName: context.projectName,
+    projectRoot: context.projectRoot,
   });
 }
 

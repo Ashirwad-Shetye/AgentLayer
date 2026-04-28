@@ -10,10 +10,10 @@ npm install -g @agentlayer/cli
 
 ## Quick Start
 
-Initialize a team locally:
+Initialize AgentLayer inside the current project repo:
 
 ```bash
-agentlayer init --local --team acme
+agentlayer init
 ```
 
 Create a spec or run a playbook:
@@ -23,13 +23,13 @@ agentlayer spec "Add audit trail for billing changes"
 agentlayer run api-feature --task "Add audit trail for billing changes"
 ```
 
-Log a useful decision into team memory:
+Log a useful decision into project memory:
 
 ```bash
 agentlayer log
 ```
 
-Search prior team memory:
+Search prior project memory:
 
 ```bash
 agentlayer memory search "Why did we change token rotation?"
@@ -37,30 +37,25 @@ agentlayer memory search "Why did we change token rotation?"
 
 ## Team Setup Example
 
-A team usually keeps two repos:
+A team using AgentLayer now commits project-local metadata directly in the working repo:
 
-- a playbooks repo for shared workflows and templates
-- a memory repo for decisions, patterns, and rejected approaches
+- `.agentlayer/playbooks/` for shared workflows
+- `.agentlayer/templates/` for spec and memory templates
+- `.agentlayer/memory/` for decisions, patterns, and rejected approaches
 
-One developer or tech lead can bootstrap them locally first:
+One developer or tech lead bootstraps the project once at the repo root:
 
 ```bash
-agentlayer init --local --team acme
+agentlayer init
 ```
 
 That creates:
 
-- `~/.agentlayer/repos/acme/playbooks`
-- `~/.agentlayer/repos/acme/memory`
+- `.agentlayer/playbooks`
+- `.agentlayer/templates`
+- `.agentlayer/memory`
 
-Once those starter repos are reviewed and pushed to your Git host, other developers can point AgentLayer at the shared copies:
-
-```bash
-agentlayer init \
-  --team acme \
-  --playbooks-repo git@github.com:acme/agentlayer-playbooks.git \
-  --memory-repo git@github.com:acme/agentlayer-memory.git
-```
+That `.agentlayer/` directory should be committed with the project, except for local cache artifacts ignored by `.gitignore`.
 
 ## Developer Setup Example
 
@@ -72,16 +67,14 @@ A single developer on the team typically does three things on a new machine:
 npm install -g @agentlayer/cli
 ```
 
-2. Connect to the shared team repos:
+2. Pull the working project repo, including `.agentlayer/`:
 
 ```bash
-agentlayer init \
-  --team acme \
-  --playbooks-repo git@github.com:acme/agentlayer-playbooks.git \
-  --memory-repo git@github.com:acme/agentlayer-memory.git
+git clone git@github.com:acme/product-repo.git
+cd product-repo
 ```
 
-3. Check memory before touching an unfamiliar area:
+3. Run AgentLayer against the project-local data:
 
 ```bash
 agentlayer memory search "How do we handle auth token rotation?"
@@ -127,7 +120,7 @@ Example `codex.config.json`:
       {
         "name": "agentlayer",
         "transport": "stdio",
-        "command": "npx @agentlayer/mcp --team acme"
+        "command": "npx @agentlayer/mcp"
       }
     ]
   }
@@ -141,7 +134,7 @@ Example `.claude/settings.json`:
   "mcpServers": {
     "agentlayer": {
       "command": "npx",
-      "args": ["@agentlayer/mcp", "--team", "acme"],
+      "args": ["@agentlayer/mcp"],
       "env": {}
     }
   }
@@ -158,16 +151,16 @@ With that in place, the coding agent can call:
 A realistic day-to-day loop for a developer team looks like this:
 
 ```bash
-agentlayer sync --team acme
+agentlayer sync
 agentlayer memory search "What is the current pattern for admin filters?"
 agentlayer spec "Refactor venue filters to share mobile and desktop logic"
 agentlayer run refactor-module --task "Refactor venue filters to share mobile and desktop logic"
-agentlayer digest --team acme
+agentlayer digest
 ```
 
 ## How It Works
 
-`@agentlayer/cli` manages setup, playbooks, memory logging, and local repo orchestration. `@agentlayer/mcp` exposes the same memory and logging capabilities to MCP-compatible coding agents over stdio. Team memory and playbooks live in local or organization-owned git repos, while AgentLayer keeps a local SQLite index for fast access.
+`@agentlayer/cli` manages setup, playbooks, memory logging, and project-local repo orchestration. `@agentlayer/mcp` exposes the same memory and logging capabilities to MCP-compatible coding agents over stdio. Shared project knowledge lives in the repo’s committed `.agentlayer/` directory, while AgentLayer keeps a machine-local SQLite index for fast access.
 
 ## Packages
 
@@ -187,6 +180,7 @@ agentlayer digest --team acme
 
 - The local config file is `~/.agentlayer/config.toml`.
 - The local SQLite index is `~/.agentlayer/index.db`.
+- Project-local AgentLayer data lives in `.agentlayer/` at the repo root.
 - `better-sqlite3` requires native build approval in environments where package build scripts are blocked.
 - Semantic reranking is optional and only activates when embeddings exist and a provider is configured.
 

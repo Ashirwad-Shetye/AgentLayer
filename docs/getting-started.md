@@ -9,7 +9,7 @@ npm install -g @agentlayer/cli
 2. Initialize a team locally:
 
 ```bash
-agentlayer init --local --team my-team
+agentlayer init
 ```
 
 3. Create a spec or run a playbook:
