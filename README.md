@@ -35,6 +35,8 @@ Search prior project memory:
 agentlayer memory search "Why did we change token rotation?"
 ```
 
+For the recommended team workflow and agent-instruction patterns, see [Best Practices](docs/best-practices.md).
+
 ## Team Setup Example
 
 A team using AgentLayer now commits project-local metadata directly in the working repo:
@@ -146,6 +148,8 @@ With that in place, the coding agent can call:
 - `agentlayer_query` before making architectural or module-level changes
 - `agentlayer_log` after making a meaningful decision worth preserving
 
+See [Best Practices](docs/best-practices.md) for copy-paste instruction text for `AGENTS.md`, Codex, and Claude project rules.
+
 ## Daily Usage Example
 
 A realistic day-to-day loop for a developer team looks like this:
@@ -171,6 +175,7 @@ agentlayer digest
 ## Documentation
 
 - [Getting Started](docs/getting-started.md)
+- [Best Practices](docs/best-practices.md)
 - [MCP Integration](docs/mcp-integration.md)
 - [Playbook Schema](docs/playbook-schema.md)
 - [Memory Schema](docs/memory-schema.md)
