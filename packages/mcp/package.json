@@ -1,0 +1,18 @@
+{
+  "name": "@agentlayer/mcp",
+  "version": "0.1.0",
+  "type": "module",
+  "bin": {
+    "agentlayer-mcp": "./bin/agentlayer-mcp.js"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit -p tsconfig.json"
+  },
+  "dependencies": {
+    "@agentlayer/cli": "workspace:*",
+    "@agentlayer/shared": "workspace:*",
+    "@modelcontextprotocol/sdk": "^1.18.0"
+  }
+}

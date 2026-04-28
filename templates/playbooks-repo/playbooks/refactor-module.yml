@@ -1,0 +1,40 @@
+name: refactor-module
+description: Refactor an existing module while preserving behavior
+agent: codex
+version: 1.0.0
+
+contextStrategy:
+  include:
+    - src/
+    - tests/
+  exclude:
+    - node_modules/
+    - dist/
+  summarize:
+    - docs/
+  maxTokens: 70000
+
+steps:
+  - name: inspect-current-shape
+    prompt: |
+      Task: {{task}}
+
+      Inspect the target module and document the current responsibilities,
+      public interface, and risky coupling points in spec.md.
+    checkpoint: spec.md captures current behavior and refactor scope
+    checkpointAuto: false
+
+  - name: refactor
+    prompt: |
+      Refactor the target module according to spec.md.
+      Preserve behavior unless the spec explicitly changes it.
+      Update tests that prove behavior is preserved.
+    checkpoint: refactor is implemented and tests cover preserved behavior
+    checkpointAuto: false
+
+  - name: validate
+    prompt: |
+      Review the refactor for regressions, dead code, and interface drift.
+      Run the relevant tests and fix any failures.
+    checkpoint: tests pass and no intended behavior changed unexpectedly
+    checkpointAuto: true
