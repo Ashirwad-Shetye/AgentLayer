@@ -5,7 +5,7 @@ AgentLayer is a git-native memory and workflow layer for AI-assisted development
 ## Install
 
 ```bash
-npm install -g @agentlayer/cli
+npm install -g @ashirwad-shetye/agentlayer-cli
 ```
 
 ## Quick Start
@@ -66,7 +66,7 @@ A single developer on the team typically does three things on a new machine:
 1. Install the CLI:
 
 ```bash
-npm install -g @agentlayer/cli
+npm install -g @ashirwad-shetye/agentlayer-cli
 ```
 
 2. Pull the working project repo, including `.agentlayer/`:
@@ -122,7 +122,7 @@ Example `codex.config.json`:
       {
         "name": "agentlayer",
         "transport": "stdio",
-        "command": "npx @agentlayer/mcp"
+        "command": "npx @ashirwad-shetye/agentlayer-mcp"
       }
     ]
   }
@@ -136,7 +136,7 @@ Example `.claude/settings.json`:
   "mcpServers": {
     "agentlayer": {
       "command": "npx",
-      "args": ["@agentlayer/mcp"],
+      "args": ["@ashirwad-shetye/agentlayer-mcp"],
       "env": {}
     }
   }
@@ -164,13 +164,13 @@ agentlayer digest
 
 ## How It Works
 
-`@agentlayer/cli` manages setup, playbooks, memory logging, and project-local repo orchestration. `@agentlayer/mcp` exposes the same memory and logging capabilities to MCP-compatible coding agents over stdio. Shared project knowledge lives in the repo’s committed `.agentlayer/` directory, while AgentLayer keeps a machine-local SQLite index for fast access.
+`@ashirwad-shetye/agentlayer-cli` manages setup, playbooks, memory logging, and project-local repo orchestration. `@ashirwad-shetye/agentlayer-mcp` exposes the same memory and logging capabilities to MCP-compatible coding agents over stdio. Shared project knowledge lives in the repo’s committed `.agentlayer/` directory, while AgentLayer keeps a machine-local SQLite index for fast access.
 
 ## Packages
 
-- `@agentlayer/cli`: global CLI entrypoint and core business logic
-- `@agentlayer/mcp`: MCP server for coding agents
-- `@agentlayer/shared`: shared types and utilities
+- `@ashirwad-shetye/agentlayer-cli`: global CLI entrypoint and core business logic
+- `@ashirwad-shetye/agentlayer-mcp`: MCP server for coding agents
+- `@ashirwad-shetye/agentlayer-shared`: shared types and utilities
 
 ## Documentation
 

@@ -1,6 +1,6 @@
 import Handlebars from "handlebars";
 import { execa } from "execa";
-import type { Playbook, PlaybookStep } from "@agentlayer/shared";
+import type { Playbook, PlaybookStep } from "@ashirwad-shetye/agentlayer-shared";
 import type {
   AgentExecutor,
   ExecutionContext,

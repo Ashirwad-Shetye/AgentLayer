@@ -4,10 +4,10 @@ import {
   CallToolRequestSchema,
   ListToolsRequestSchema,
 } from "@modelcontextprotocol/sdk/types";
-import { loadConfig } from "@agentlayer/cli/config/loader";
-import { resolveProjectPaths } from "@agentlayer/cli/config/project-paths";
-import { searchMemory } from "@agentlayer/cli/core/memory/search";
-import { writeMemoryEntry } from "@agentlayer/cli/core/memory/writer";
+import { loadConfig } from "@ashirwad-shetye/agentlayer-cli/config/loader";
+import { resolveProjectPaths } from "@ashirwad-shetye/agentlayer-cli/config/project-paths";
+import { searchMemory } from "@ashirwad-shetye/agentlayer-cli/core/memory/search";
+import { writeMemoryEntry } from "@ashirwad-shetye/agentlayer-cli/core/memory/writer";
 import { SessionCache } from "./cache/session.js";
 
 type QueryIntent = "understand" | "extend" | "debug" | "review";

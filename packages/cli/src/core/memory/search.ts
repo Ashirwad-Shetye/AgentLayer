@@ -1,4 +1,4 @@
-import type { MemoryIntent } from "@agentlayer/shared";
+import type { MemoryIntent } from "@ashirwad-shetye/agentlayer-shared";
 import { loadAllMemories } from "./reader.js";
 import { applyTokenBudget } from "../optimizer/budget.js";
 import { bm25Filter } from "../optimizer/bm25.js";

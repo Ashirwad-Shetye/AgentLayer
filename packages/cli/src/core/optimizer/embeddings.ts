@@ -1,7 +1,7 @@
 import { createHash } from "crypto";
 import { existsSync, readFileSync } from "fs";
 import { join } from "path";
-import type { IndexedMemory } from "@agentlayer/shared";
+import type { IndexedMemory } from "@ashirwad-shetye/agentlayer-shared";
 
 const queryEmbeddingCache = new Map<string, Float32Array>();
 

@@ -128,7 +128,7 @@ Each phase must produce working, testable output before the next phase starts.
 - Document Claude Code MCP setup with `.claude/settings.json`.
 - Document Codex MCP setup with `codex.config.json`.
 - Include team selection behavior and environment variable notes.
-- Keep examples copyable and scoped to `@agentlayer/mcp`.
+- Keep examples copyable and scoped to `@ashirwad-shetye/agentlayer-mcp`.
 
 **Acceptance check:** Integration docs contain valid JSON examples for Claude Code and Codex.
 

@@ -23,7 +23,7 @@ importers:
 
   packages/cli:
     dependencies:
-      '@agentlayer/shared':
+      '@ashirwad-shetye/agentlayer-shared':
         specifier: workspace:*
         version: link:../shared
       '@iarna/toml':
@@ -78,10 +78,10 @@ importers:
 
   packages/mcp:
     dependencies:
-      '@agentlayer/cli':
+      '@ashirwad-shetye/agentlayer-cli':
         specifier: workspace:*
         version: link:../cli
-      '@agentlayer/shared':
+      '@ashirwad-shetye/agentlayer-shared':
         specifier: workspace:*
         version: link:../shared
       '@modelcontextprotocol/sdk':

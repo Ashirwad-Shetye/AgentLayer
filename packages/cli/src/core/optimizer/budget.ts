@@ -3,7 +3,7 @@ import {
   truncateToTokenBudget,
   type IndexedMemory,
   type MemoryIntent,
-} from "@agentlayer/shared";
+} from "@ashirwad-shetye/agentlayer-shared";
 
 const INTENT_BUDGETS: Record<MemoryIntent, number> = {
   understand: 800,

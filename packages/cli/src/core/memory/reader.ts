@@ -1,7 +1,12 @@
 import { existsSync, readFileSync, readdirSync } from "fs";
 import { extname, join } from "path";
 import matter from "gray-matter";
-import { sha256Short, type IndexedMemory, type MemoryEntry, type MemoryFrontmatter } from "@agentlayer/shared";
+import {
+  sha256Short,
+  type IndexedMemory,
+  type MemoryEntry,
+  type MemoryFrontmatter,
+} from "@ashirwad-shetye/agentlayer-shared";
 
 function tokenize(text: string): string[] {
   return text

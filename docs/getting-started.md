@@ -3,7 +3,7 @@
 1. Install the CLI globally:
 
 ```bash
-npm install -g @agentlayer/cli
+npm install -g @ashirwad-shetye/agentlayer-cli
 ```
 
 2. Initialize a team locally:

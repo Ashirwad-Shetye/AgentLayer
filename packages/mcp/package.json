@@ -1,5 +1,5 @@
 {
-  "name": "@agentlayer/mcp",
+  "name": "@ashirwad-shetye/agentlayer-mcp",
   "version": "0.1.0",
   "type": "module",
   "bin": {
@@ -11,8 +11,8 @@
     "typecheck": "tsc --noEmit -p tsconfig.json"
   },
   "dependencies": {
-    "@agentlayer/cli": "workspace:*",
-    "@agentlayer/shared": "workspace:*",
+    "@ashirwad-shetye/agentlayer-cli": "workspace:*",
+    "@ashirwad-shetye/agentlayer-shared": "workspace:*",
     "@modelcontextprotocol/sdk": "^1.18.0"
   }
 }

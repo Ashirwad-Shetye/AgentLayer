@@ -1,4 +1,4 @@
-import type { Playbook, PlaybookStep } from "@agentlayer/shared";
+import type { Playbook, PlaybookStep } from "@ashirwad-shetye/agentlayer-shared";
 import type { ValidatedConfig } from "../../config/schema.js";
 
 export interface ExecutionContext {

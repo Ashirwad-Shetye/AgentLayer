@@ -7,7 +7,7 @@ import {
   sha256Short,
   type MemoryEntry,
   type MemoryFrontmatter,
-} from "@agentlayer/shared";
+} from "@ashirwad-shetye/agentlayer-shared";
 import type { WriteMemoryOptions } from "./types.js";
 
 function getGitUser(): string {

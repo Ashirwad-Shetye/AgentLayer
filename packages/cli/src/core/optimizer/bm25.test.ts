@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import type { IndexedMemory } from "@agentlayer/shared";
+import type { IndexedMemory } from "@ashirwad-shetye/agentlayer-shared";
 import { bm25Filter } from "./bm25.js";
 
 function memory(

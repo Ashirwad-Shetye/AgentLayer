@@ -2,7 +2,7 @@ import { existsSync, readdirSync, readFileSync } from "fs";
 import { join } from "path";
 import { load as loadYaml } from "js-yaml";
 import { z } from "zod";
-import type { Playbook } from "@agentlayer/shared";
+import type { Playbook } from "@ashirwad-shetye/agentlayer-shared";
 import type { PlaybookSummary } from "./types.js";
 
 const PlaybookSchema = z.object({

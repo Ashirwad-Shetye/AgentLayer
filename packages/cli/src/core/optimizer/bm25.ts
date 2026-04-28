@@ -1,4 +1,4 @@
-import type { IndexedMemory } from "@agentlayer/shared";
+import type { IndexedMemory } from "@ashirwad-shetye/agentlayer-shared";
 
 interface BM25Params {
   k1: number;

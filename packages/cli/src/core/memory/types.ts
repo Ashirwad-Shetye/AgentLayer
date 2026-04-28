@@ -1,4 +1,4 @@
-import type { MemoryEntry } from "@agentlayer/shared";
+import type { MemoryEntry } from "@ashirwad-shetye/agentlayer-shared";
 
 export interface WriteMemoryOptions {
   memoryRepo: string;

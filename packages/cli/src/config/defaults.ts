@@ -1,4 +1,4 @@
-import type { AgentLayerConfig } from "@agentlayer/shared";
+import type { AgentLayerConfig } from "@ashirwad-shetye/agentlayer-shared";
 
 export function getDefaultConfig(): AgentLayerConfig {
   return {

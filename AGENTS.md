@@ -13,14 +13,14 @@ The product must keep team knowledge local, inspectable, and versioned in the us
 - Use SQLite only, through `better-sqlite3`; do not add an external database.
 - Do not introduce running daemons. All work must happen on demand or through subprocesses.
 - Keep team data local or in organization-owned git repos. External calls must be explicit user-initiated API calls.
-- `npm install -g @agentlayer/cli` should be the only install step required for end users.
+- `npm install -g @ashirwad-shetye/agentlayer-cli` should be the only install step required for end users.
 - Every module must be independently testable with Vitest.
 - Keep package exports clean because the repo is intended for open-source and library use.
 
 ## Architecture Guidelines
 
 - Use a pnpm monorepo with `packages/cli`, `packages/mcp`, and `packages/shared`.
-- Put shared types and utilities in `@agentlayer/shared`.
+- Put shared types and utilities in `@ashirwad-shetye/agentlayer-shared`.
 - Keep CLI command files thin. They should parse arguments, load config, call core modules, print results, and handle process exits.
 - Keep business logic in `packages/cli/src/core/**` or shared packages, not in command registration files.
 - Keep the MCP package focused on MCP transport, tools, context formatting, and session cache behavior.

@@ -1,6 +1,6 @@
 # MCP Integration
 
-AgentLayer exposes an MCP server through `@agentlayer/mcp`. The server reads the same local config and project-local `.agentlayer/` data used by the CLI.
+AgentLayer exposes an MCP server through `@ashirwad-shetye/agentlayer-mcp`. The server reads the same local config and project-local `.agentlayer/` data used by the CLI.
 
 ## Project resolution
 
@@ -20,7 +20,7 @@ Commit this snippet to `.claude/settings.json` in a repository where Claude Code
     "mcpServers": {
       "agentlayer": {
         "command": "npx",
-      "args": ["@agentlayer/mcp"],
+      "args": ["@ashirwad-shetye/agentlayer-mcp"],
       "env": {}
     }
   }
@@ -38,7 +38,7 @@ Use this in `codex.config.json`:
       {
         "name": "agentlayer",
         "transport": "stdio",
-        "command": "npx @agentlayer/mcp"
+        "command": "npx @ashirwad-shetye/agentlayer-mcp"
       }
     ]
   }
