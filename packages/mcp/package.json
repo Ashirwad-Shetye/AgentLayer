@@ -1,6 +1,6 @@
 {
   "name": "@ashirwad-shetye/agentlayer-mcp",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "type": "module",
   "bin": {
     "agentlayer-mcp": "./bin/agentlayer-mcp.js"
