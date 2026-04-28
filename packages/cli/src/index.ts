@@ -14,7 +14,7 @@ const program = new Command();
 program
   .name("agentlayer")
   .description("git-native institutional memory for AI-assisted development teams")
-  .version("0.1.0");
+  .version("0.1.3");
 
 registerInit(program);
 registerRun(program);

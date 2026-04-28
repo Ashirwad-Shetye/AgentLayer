@@ -29,4 +29,5 @@ agentlayer log
 
 ```bash
 agentlayer memory search "Why did we switch auth token handling?"
+agentlayer memory logs --limit 20
 ```

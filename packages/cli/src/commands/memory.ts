@@ -1,6 +1,6 @@
 import { Command } from "commander";
 import { resolveProjectPaths } from "../config/project-paths.js";
-import { loadAllMemories } from "../core/memory/reader.js";
+import { loadAllMemories, relativeMemoryPath } from "../core/memory/reader.js";
 import { searchMemory } from "../core/memory/search.js";
 
 export function registerMemory(program: Command): void {
@@ -49,4 +49,57 @@ export function registerMemory(program: Command): void {
       console.log(`${moduleName}: ${count}`);
     }
   });
+
+  memory
+    .command("logs")
+    .description("list memory entries with timestamps, titles, and paths")
+    .option("--module <path>", "limit to a module")
+    .option("--limit <count>", "limit number of rows", "50")
+    .action((options: { module?: string; limit: string }) => {
+      const paths = resolveProjectPaths();
+      const limit = Number.parseInt(options.limit, 10);
+
+      if (Number.isNaN(limit) || limit <= 0) {
+        console.error("Limit must be a positive integer.");
+        process.exit(1);
+      }
+
+      let memories = loadAllMemories(paths.memoryDir);
+
+      if (options.module) {
+        memories = memories.filter(
+          (memoryEntry) =>
+            memoryEntry.frontmatter.module === options.module ||
+            memoryEntry.frontmatter.module.startsWith(`${options.module}/`),
+        );
+      }
+
+      const rows = memories
+        .slice()
+        .sort(
+          (left, right) =>
+            new Date(right.frontmatter.date).getTime() -
+            new Date(left.frontmatter.date).getTime(),
+        )
+        .slice(0, limit);
+
+      if (rows.length === 0) {
+        console.log("No memory entries found.");
+        return;
+      }
+
+      for (const memoryEntry of rows) {
+        const title = memoryEntry.frontmatter.task || "(untitled)";
+        const relativePath = relativeMemoryPath(paths.memoryDir, memoryEntry.filePath);
+        console.log(
+          [
+            memoryEntry.frontmatter.date,
+            title,
+            `module=${memoryEntry.frontmatter.module}`,
+            `developer=${memoryEntry.frontmatter.developer}`,
+            relativePath,
+          ].join(" | "),
+        );
+      }
+    });
 }

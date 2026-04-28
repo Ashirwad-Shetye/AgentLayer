@@ -33,6 +33,7 @@ Search prior project memory:
 
 ```bash
 agentlayer memory search "Why did we change token rotation?"
+agentlayer memory logs --limit 20
 ```
 
 For the recommended team workflow and agent-instruction patterns, see [Best Practices](docs/best-practices.md).
@@ -81,6 +82,7 @@ cd product-repo
 ```bash
 agentlayer memory search "How do we handle auth token rotation?"
 agentlayer memory search "What are the constraints around billing webhooks?"
+agentlayer memory logs --limit 20
 ```
 
 ## Coding Agent Example
@@ -156,10 +158,19 @@ A realistic day-to-day loop for a developer team looks like this:
 
 ```bash
 agentlayer sync
+agentlayer memory logs --limit 20
 agentlayer memory search "What is the current pattern for admin filters?"
 agentlayer spec "Refactor venue filters to share mobile and desktop logic"
 agentlayer run refactor-module --task "Refactor venue filters to share mobile and desktop logic"
 agentlayer digest
+```
+
+To inspect existing memory entries directly as a timestamped log directory:
+
+```bash
+agentlayer memory logs
+agentlayer memory logs --module src/billing
+agentlayer memory logs --limit 20
 ```
 
 ## How It Works

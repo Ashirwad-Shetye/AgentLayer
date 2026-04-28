@@ -65,6 +65,7 @@ Use this loop for normal development:
 
 ```bash
 agentlayer sync
+agentlayer memory logs --limit 20
 agentlayer memory search "What is the current pattern for dashboard refresh?" --intent understand
 agentlayer spec "Add analytics trend cards to the dashboard"
 agentlayer run api-feature --task "Add analytics trend cards to the dashboard"

@@ -33,7 +33,7 @@ function emptyResponse(): { content: Array<{ type: "text"; text: string }> } {
 }
 
 const server = new Server(
-  { name: "agentlayer", version: "0.1.0" },
+  { name: "agentlayer", version: "0.1.3" },
   { capabilities: { tools: {} } },
 );
 

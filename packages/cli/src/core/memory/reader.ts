@@ -1,5 +1,5 @@
 import { existsSync, readFileSync, readdirSync } from "fs";
-import { extname, join } from "path";
+import { extname, join, relative } from "path";
 import matter from "gray-matter";
 import {
   sha256Short,
@@ -71,8 +71,9 @@ export function parseMemoryFile(filePath: string): MemoryEntry | null {
 
 export function loadAllMemories(memoryRepo: string): IndexedMemory[] {
   const modulesDir = join(memoryRepo, "modules");
+  const globalDir = join(memoryRepo, "global");
 
-  if (!existsSync(modulesDir)) {
+  if (!existsSync(modulesDir) && !existsSync(globalDir)) {
     return [];
   }
 
@@ -109,7 +110,17 @@ export function loadAllMemories(memoryRepo: string): IndexedMemory[] {
     }
   }
 
-  walk(modulesDir);
+  if (existsSync(globalDir)) {
+    walk(globalDir);
+  }
+
+  if (existsSync(modulesDir)) {
+    walk(modulesDir);
+  }
 
   return memories;
+}
+
+export function relativeMemoryPath(memoryRepo: string, filePath: string): string {
+  return relative(memoryRepo, filePath) || filePath;
 }

@@ -2,7 +2,7 @@ import { mkdtempSync, rmSync } from "fs";
 import { tmpdir } from "os";
 import { join } from "path";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
-import { loadAllMemories, parseMemoryFile } from "./reader.js";
+import { loadAllMemories, parseMemoryFile, relativeMemoryPath } from "./reader.js";
 import { writeMemoryEntry } from "./writer.js";
 
 describe("memory reader", () => {
@@ -57,5 +57,27 @@ describe("memory reader", () => {
     expect(memories).toHaveLength(1);
     expect(memories[0]?.bm25Tokens).toContain("bm25");
     expect(memories[0]?.decayScore).toBeGreaterThan(0.9);
+  });
+
+  it("loads global memories and reports a relative path", () => {
+    writeMemoryEntry({
+      memoryRepo: tempDir,
+      frontmatter: {
+        module: "global",
+        task: "document ingestion constraint",
+        agent: "codex",
+        tags: ["global"],
+      },
+      content: {
+        decision: "Prefer queue-based ingestion for analytics events.",
+        reason: "It isolates provider spikes from the dashboard read path.",
+      },
+    });
+
+    const memories = loadAllMemories(tempDir);
+
+    expect(memories).toHaveLength(1);
+    expect(memories[0]?.frontmatter.module).toBe("global");
+    expect(relativeMemoryPath(tempDir, memories[0]!.filePath).endsWith(".md")).toBe(true);
   });
 });
