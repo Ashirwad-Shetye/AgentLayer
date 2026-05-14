@@ -93,6 +93,33 @@ The agent should use:
 - `agentlayer_query` before implementation when prior context matters
 - `agentlayer_log` after implementation when a durable decision was made
 
+## How Agents Should Query Memory
+
+For MCP-based agent retrieval, do not rely only on the raw question when richer task context is available.
+
+Good retrieval context includes:
+
+- the direct question
+- current task or plan step
+- primary module
+- relevant file paths
+- current error when debugging
+- a few extracted keywords
+
+Examples of better agent prompts:
+
+- "Before changing auth rotation, query AgentLayer with the current task, module, and affected files."
+- "While debugging webhook retries, include the current error and module in the AgentLayer query."
+- "Before this refactor, check AgentLayer for prior decisions using the task, module, and review intent."
+
+Use prompt-shaped retrieval at these moments:
+
+- before changing unfamiliar modules
+- before architectural decisions
+- before refactors in sensitive areas
+- during debugging when prior decisions may explain current behavior
+- during reviews when constraints or rejected approaches matter
+
 ## Recommended Repo Rule
 
 Add a rule like this to `AGENTS.md`, Codex instructions, or Claude project instructions:

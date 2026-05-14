@@ -9,14 +9,11 @@ import { resolveProjectPaths } from "@ashirwad-shetye/agentlayer-cli/config/proj
 import { searchMemory } from "@ashirwad-shetye/agentlayer-cli/core/memory/search";
 import { writeMemoryEntry } from "@ashirwad-shetye/agentlayer-cli/core/memory/writer";
 import { SessionCache } from "./cache/session.js";
-
-type QueryIntent = "understand" | "extend" | "debug" | "review";
-
-interface QueryArguments {
-  query: string;
-  module?: string;
-  intent?: QueryIntent;
-}
+import {
+  buildQueryCacheKey,
+  buildRetrievalQuery,
+  type QueryArguments,
+} from "./query-context.js";
 
 interface LogArguments {
   decision: string;
@@ -60,6 +57,33 @@ server.setRequestHandler(ListToolsRequestSchema, async () => ({
             type: "string",
             enum: ["understand", "extend", "debug", "review"],
             description: "Controls the token budget and ranking context.",
+          },
+          task: {
+            type: "string",
+            description: "Optional current task or plan step to shape retrieval.",
+          },
+          files: {
+            type: "array",
+            items: { type: "string" },
+            description: "Optional relevant file paths for the current work.",
+          },
+          error: {
+            type: "string",
+            description: "Optional current error or failure signal to include in retrieval.",
+          },
+          keywords: {
+            type: "array",
+            items: { type: "string" },
+            description: "Optional extracted terms that should influence retrieval.",
+          },
+          agent: {
+            type: "string",
+            description: "Optional agent identifier for the current work session.",
+          },
+          phase: {
+            type: "string",
+            enum: ["planning", "implementation", "debugging", "review"],
+            description: "Optional current work phase.",
           },
         },
         required: ["query"],
@@ -112,9 +136,15 @@ server.setRequestHandler(
 
   if (request.params.name === "agentlayer_query") {
     const args = (request.params.arguments ?? {}) as QueryArguments;
-    const moduleName = args.module ?? "global";
     const intent = args.intent ?? "understand";
-    const cacheKey = `${moduleName}:${intent}:${args.query}`;
+    const retrieval = buildRetrievalQuery({
+      ...args,
+      intent,
+    });
+    const cacheKey = buildQueryCacheKey({
+      ...args,
+      intent,
+    });
     const cached = sessionCache.get(cacheKey);
 
     if (cached) {
@@ -128,6 +158,7 @@ server.setRequestHandler(
       query: args.query,
       ...(args.module ? { module: args.module } : {}),
       intent,
+      retrieval,
       ...(process.env["ANTHROPIC_API_KEY"]
         ? { apiKey: process.env["ANTHROPIC_API_KEY"] }
         : {}),

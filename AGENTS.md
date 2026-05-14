@@ -64,3 +64,5 @@ The product must keep team knowledge local, inspectable, and versioned in the us
 - When implementing a CLI command, first identify the core module it should delegate to.
 - When implementing MCP tools, reuse CLI core modules rather than duplicating behavior.
 - Keep documentation updated when behavior, command names, schemas, or setup steps change.
+- When querying AgentLayer from a coding agent, prefer prompt-shaped retrieval over a raw short question. Include the current task, module, relevant files, and active error when those details materially improve retrieval.
+- Use AgentLayer retrieval before unfamiliar module changes, architectural work, sensitive refactors, debugging sessions, and code review decisions.

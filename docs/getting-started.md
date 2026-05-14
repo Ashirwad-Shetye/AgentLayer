@@ -31,3 +31,9 @@ agentlayer log
 agentlayer memory search "Why did we switch auth token handling?"
 agentlayer memory logs --limit 20
 ```
+
+6. If you are using Codex or Claude Code with the MCP server, prefer prompt-shaped retrieval:
+
+- ask the agent to check AgentLayer before changing unfamiliar code
+- include task, module, affected files, or the current error when that context matters
+- let the agent use `agentlayer_query` with that structured context before implementation or debugging

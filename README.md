@@ -111,6 +111,8 @@ agentlayer log
 agentlayer memory search "Why did we add billing audit trails?"
 ```
 
+With MCP connected, agents should not rely only on the raw user sentence. AgentLayer now supports prompt-shaped retrieval for coding agents: the agent can combine the current task, module, files, and direct question into a richer retrieval query before memory ranking.
+
 ## MCP Agent Setup Example
 
 When a team wants coding agents to query memory automatically during development, they add the MCP server to their agent config.
@@ -150,6 +152,14 @@ With that in place, the coding agent can call:
 - `agentlayer_query` before making architectural or module-level changes
 - `agentlayer_log` after making a meaningful decision worth preserving
 
+Better `agentlayer_query` examples for coding agents:
+
+- "Why does dashboard analytics use polling instead of webhooks?"
+- "Before changing auth rotation, check AgentLayer using the current task, module, and affected files."
+- "While debugging webhook retries, query AgentLayer with the current error and module."
+
+Prompt-shaped retrieval currently applies to MCP/coding-agent lookups first. The human CLI search flow remains a direct query surface.
+
 See [Best Practices](docs/best-practices.md) for copy-paste instruction text for `AGENTS.md`, Codex, and Claude project rules.
 
 ## Daily Usage Example
@@ -176,6 +186,8 @@ agentlayer memory logs --limit 20
 ## How It Works
 
 `@ashirwad-shetye/agentlayer-cli` manages setup, playbooks, memory logging, and project-local repo orchestration. `@ashirwad-shetye/agentlayer-mcp` exposes the same memory and logging capabilities to MCP-compatible coding agents over stdio. Shared project knowledge lives in the repo’s committed `.agentlayer/` directory, while machine-local settings live under `~/.agentlayer/`.
+
+For MCP queries, AgentLayer now compiles a retrieval-oriented query from agent context such as the direct question, current task, module, relevant files, and active error. That richer query text is what BM25 and optional semantic reranking operate on.
 
 ## Packages
 
