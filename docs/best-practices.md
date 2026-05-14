@@ -72,6 +72,18 @@ agentlayer run api-feature --task "Add analytics trend cards to the dashboard"
 agentlayer log --module src/dashboard
 ```
 
+For scripts that cannot open an editor, use `--auto` only with explicit content:
+
+```bash
+agentlayer log --auto \
+  --module src/dashboard \
+  --task "Dashboard analytics refresh strategy" \
+  --decision "Keep dashboard analytics on bounded polling." \
+  --reason "Provider webhook coverage is incomplete for all visible metrics." \
+  --tradeoff-accepted "Refresh can lag by a few seconds." \
+  --tags analytics,dashboard,polling
+```
+
 If you want to summarize a completed agent session into project memory:
 
 ```bash

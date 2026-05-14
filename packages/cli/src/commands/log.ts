@@ -54,19 +54,71 @@ function buildLogTemplate(memoryTemplatePath?: string): string {
   return TEMPLATE;
 }
 
+function sectionBlock(heading: string, value: string | undefined): string {
+  return value ? `\n## ${heading}\n${value}\n` : "";
+}
+
+function buildAutoLogTemplate(options: LogCommandOptions): string {
+  const task = options.task ?? options.decision?.slice(0, 60) ?? "untitled";
+  const moduleName = options.module ?? "global";
+  const agent = options.agent ?? "codex";
+  const tags = options.tags ?? "";
+
+  return `---
+module: ${moduleName}
+task: ${task}
+agent: ${agent}
+tags: [${tags}]
+---
+
+## decision
+${options.decision ?? ""}
+
+## reason
+${options.reason ?? ""}
+${sectionBlock("rejected", options.rejected)}${sectionBlock("tradeoff accepted", options.tradeoffAccepted)}${sectionBlock("open", options.open)}${sectionBlock("reusable pattern", options.reusablePattern)}`;
+}
+
+interface LogCommandOptions {
+  auto?: boolean;
+  module?: string;
+  task?: string;
+  decision?: string;
+  reason?: string;
+  rejected?: string;
+  tradeoffAccepted?: string;
+  open?: string;
+  reusablePattern?: string;
+  tags?: string;
+  agent?: string;
+}
+
 export function registerLog(program: Command): void {
   program
     .command("log")
     .description("record a decision to project memory")
     .option("--module <path>", "module path override")
     .option("--auto", "non-interactive mode for scripted usage")
-    .action((options: { auto?: boolean; module?: string }) => {
+    .option("--task <text>", "task/title for non-interactive logging")
+    .option("--decision <text>", "decision text for non-interactive logging")
+    .option("--reason <text>", "reason text for non-interactive logging")
+    .option("--rejected <text>", "rejected alternative for non-interactive logging")
+    .option("--tradeoff-accepted <text>", "accepted tradeoff for non-interactive logging")
+    .option("--open <text>", "open follow-up for non-interactive logging")
+    .option("--reusable-pattern <text>", "reusable pattern for non-interactive logging")
+    .option("--tags <items>", "comma-separated tags for non-interactive logging")
+    .option("--agent <name>", "agent name for non-interactive logging")
+    .action((options: LogCommandOptions) => {
       const config = loadConfig();
       const paths = resolveProjectPaths();
       const tempPath = join(tmpdir(), `agentlayer-log-${Date.now()}.md`);
       const memoryTemplatePath = join(paths.templatesDir, "memory-entry.md.hbs");
 
-      writeFileSync(tempPath, buildLogTemplate(memoryTemplatePath), "utf-8");
+      writeFileSync(
+        tempPath,
+        options.auto ? buildAutoLogTemplate(options) : buildLogTemplate(memoryTemplatePath),
+        "utf-8",
+      );
 
       if (!options.auto) {
         const editor = config.editor ?? process.env["EDITOR"] ?? "vim";
@@ -90,6 +142,13 @@ export function registerLog(program: Command): void {
       const tradeoffAccepted = extractSection(edited, "tradeoff accepted");
       const open = extractSection(edited, "open");
       const reusablePattern = extractSection(edited, "reusable pattern");
+      const decision = extractSection(edited, "decision") ?? "";
+      const reason = extractSection(edited, "reason") ?? "";
+
+      if (!decision || !reason) {
+        console.error("Memory log requires non-empty decision and reason sections.");
+        process.exit(1);
+      }
 
       const { filePath } = writeMemoryEntry({
         memoryRepo: paths.memoryDir,
@@ -103,8 +162,8 @@ export function registerLog(program: Command): void {
           tags,
         },
         content: {
-          decision: extractSection(edited, "decision") ?? "",
-          reason: extractSection(edited, "reason") ?? "",
+          decision,
+          reason,
           ...(rejected !== undefined ? { rejected } : {}),
           ...(tradeoffAccepted !== undefined ? { tradeoffAccepted } : {}),
           ...(open !== undefined ? { open } : {}),

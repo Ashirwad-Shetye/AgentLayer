@@ -39,6 +39,7 @@ describe("writeMemoryEntry", () => {
     expect(parsed?.reason).toBe("Reduce replay risk and simplify rotation.");
     expect(parsed?.rejected).toBe("Long-lived bearer tokens");
     expect(parsed?.frontmatter.module).toBe("src/auth");
+    expect(parsed?.frontmatter.date).toMatch(/^\d{4}-\d{2}-\d{2}$/);
     expect(parsed?.frontmatter.tags).toEqual(["auth", "token"]);
   });
 
@@ -78,5 +79,39 @@ describe("writeMemoryEntry", () => {
     expect(lines).toHaveLength(2);
     expect(JSON.parse(lines[0] ?? "{}").module).toBe("src/api");
     expect(JSON.parse(lines[1] ?? "{}").module).toBe("src/ui");
+  });
+
+  it("does not overwrite same-day entries with the same module and task", () => {
+    const first = writeMemoryEntry({
+      memoryRepo: tempDir,
+      frontmatter: {
+        module: "src/auth",
+        task: "same task",
+        agent: "codex",
+        tags: [],
+      },
+      content: {
+        decision: "Decision one",
+        reason: "Reason one",
+      },
+    });
+
+    const second = writeMemoryEntry({
+      memoryRepo: tempDir,
+      frontmatter: {
+        module: "src/auth",
+        task: "same task",
+        agent: "codex",
+        tags: [],
+      },
+      content: {
+        decision: "Decision two",
+        reason: "Reason two",
+      },
+    });
+
+    expect(second.filePath).not.toBe(first.filePath);
+    expect(readFileSync(first.filePath, "utf-8")).toContain("Decision one");
+    expect(readFileSync(second.filePath, "utf-8")).toContain("Decision two");
   });
 });

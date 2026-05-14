@@ -28,6 +28,13 @@ export interface SearchOptions {
   localModel?: string;
 }
 
+function moduleMatches(memoryModule: string, moduleFilter: string): boolean {
+  return (
+    memoryModule === moduleFilter ||
+    memoryModule.startsWith(`${moduleFilter}/`)
+  );
+}
+
 export async function searchMemory(options: SearchOptions): Promise<string> {
   const intent = options.intent ?? "understand";
   const compiledQuery = compileRetrievalQuery({
@@ -41,9 +48,7 @@ export async function searchMemory(options: SearchOptions): Promise<string> {
   if (compiledQuery.moduleFilter) {
     const moduleFilter = compiledQuery.moduleFilter;
     memories = memories.filter(
-      (memory) =>
-        memory.frontmatter.module === moduleFilter ||
-        memory.frontmatter.module.startsWith(moduleFilter),
+      (memory) => moduleMatches(memory.frontmatter.module, moduleFilter),
     );
   }
 

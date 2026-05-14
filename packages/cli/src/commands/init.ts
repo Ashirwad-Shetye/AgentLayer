@@ -1,4 +1,4 @@
-import { cpSync, existsSync, mkdirSync, writeFileSync } from "fs";
+import { cpSync, existsSync, mkdirSync, readdirSync, writeFileSync } from "fs";
 import { dirname, join } from "path";
 import { fileURLToPath } from "url";
 import chalk from "chalk";
@@ -13,7 +13,17 @@ function getTemplatesRoot(): string {
 
 function copyTemplateDir(sourceRelativePath: string, destination: string): void {
   const source = join(getTemplatesRoot(), sourceRelativePath);
-  cpSync(source, destination, { recursive: true });
+
+  for (const entry of readdirSync(source, { withFileTypes: true })) {
+    const sourcePath = join(source, entry.name);
+    const destinationPath = join(destination, entry.name);
+
+    if (existsSync(destinationPath)) {
+      continue;
+    }
+
+    cpSync(sourcePath, destinationPath, { recursive: true });
+  }
 }
 
 function ensureProjectAgentlayerStructure(paths: ReturnType<typeof resolveProjectPaths>): void {

@@ -1,6 +1,6 @@
 import { execSync } from "child_process";
 import { existsSync, readFileSync, writeFileSync } from "fs";
-import { join } from "path";
+import { dirname, extname, join, basename } from "path";
 import Handlebars from "handlebars";
 import {
   ensureParentDir,
@@ -20,7 +20,10 @@ function getGitUser(): string {
 
 function getCurrentCommit(): string | undefined {
   try {
-    return execSync("git rev-parse --short HEAD", { encoding: "utf-8" }).trim();
+    return execSync("git rev-parse --short HEAD", {
+      encoding: "utf-8",
+      stdio: ["ignore", "pipe", "ignore"],
+    }).trim();
   } catch {
     return undefined;
   }
@@ -60,7 +63,7 @@ export function renderMemoryTemplate(
 function buildFrontmatterBlock(frontmatter: MemoryFrontmatter): string[] {
   return [
     "---",
-    `date: ${frontmatter.date}`,
+    `date: "${frontmatter.date}"`,
     `module: ${frontmatter.module}`,
     `task: ${frontmatter.task}`,
     `developer: ${frontmatter.developer}`,
@@ -124,6 +127,26 @@ function appendIndexEntry(
   writeFileSync(indexPath, `${existing}${line}\n`, "utf-8");
 }
 
+function resolveUniqueMemoryFilePath(filePath: string): string {
+  if (!existsSync(filePath)) {
+    return filePath;
+  }
+
+  const dir = dirname(filePath);
+  const ext = extname(filePath);
+  const base = basename(filePath, ext);
+
+  for (let index = 2; index < 1000; index += 1) {
+    const candidate = join(dir, `${base}-${index}${ext}`);
+
+    if (!existsSync(candidate)) {
+      return candidate;
+    }
+  }
+
+  return join(dir, `${base}-${Date.now()}${ext}`);
+}
+
 export function writeMemoryEntry(
   options: WriteMemoryOptions,
 ): { filePath: string; entry: MemoryEntry } {
@@ -136,14 +159,15 @@ export function writeMemoryEntry(
     developer,
     ...(commit ? { commit } : {}),
   });
-  const id = sha256Short(`${date}:${frontmatter.module}:${developer}`);
-  const filePath = buildMemoryFilePath(
+  const baseFilePath = buildMemoryFilePath(
     options.memoryRepo,
     frontmatter.module,
     date,
     frontmatter.task,
   );
+  const filePath = resolveUniqueMemoryFilePath(baseFilePath);
   const rawMarkdown = buildMarkdown(frontmatter, options);
+  const id = sha256Short(`${filePath}:${rawMarkdown}`);
 
   ensureParentDir(filePath);
   writeFileSync(filePath, rawMarkdown, "utf-8");

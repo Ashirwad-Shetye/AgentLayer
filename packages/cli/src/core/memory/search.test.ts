@@ -96,4 +96,47 @@ describe("memory search", () => {
     expect(legacyResults.some((memory) => memory.frontmatter.module === "src/dashboard")).toBe(true);
     expect(structuredResults[0]?.frontmatter.module).toBe("src/dashboard");
   });
+
+  it("searches rich memory sections and respects module boundaries", async () => {
+    writeMemoryEntry({
+      memoryRepo: tempDir,
+      frontmatter: {
+        module: "src/auth",
+        task: "auth rotation",
+        agent: "codex",
+        tags: [],
+      },
+      content: {
+        decision: "Keep token refresh deterministic.",
+        reason: "The active session table owns invalidation.",
+        tradeoffAccepted: "Rotation may keep a short stale window.",
+        reusablePattern: "Prefer explicit invalidation checks before session refresh.",
+      },
+    });
+
+    writeMemoryEntry({
+      memoryRepo: tempDir,
+      frontmatter: {
+        module: "src/authentication",
+        task: "different module",
+        agent: "codex",
+        tags: ["stale"],
+      },
+      content: {
+        decision: "This should not match the src/auth module filter.",
+        reason: "It is a sibling module with a shared prefix.",
+      },
+    });
+
+    const result = await searchMemory({
+      memoryRepo: tempDir,
+      query: "stale invalidation pattern",
+      module: "src/auth",
+      intent: "understand",
+    });
+
+    expect(result).toContain("src/auth");
+    expect(result).toContain("PATTERN: Prefer explicit invalidation checks");
+    expect(result).not.toContain("src/authentication");
+  });
 });

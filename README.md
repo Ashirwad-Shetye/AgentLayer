@@ -29,6 +29,18 @@ Log a useful decision into project memory:
 agentlayer log
 ```
 
+For scripts or agent harnesses that need a non-interactive CLI path:
+
+```bash
+agentlayer log --auto \
+  --module src/dashboard \
+  --task "Dashboard analytics refresh strategy" \
+  --decision "Keep dashboard analytics on bounded polling." \
+  --reason "Provider webhook coverage is incomplete for all visible metrics." \
+  --tradeoff-accepted "Refresh can lag by a few seconds." \
+  --tags analytics,dashboard,polling
+```
+
 Search prior project memory:
 
 ```bash
@@ -202,6 +214,7 @@ For MCP queries, AgentLayer now compiles a retrieval-oriented query from agent c
 - [MCP Integration](docs/mcp-integration.md)
 - [Playbook Schema](docs/playbook-schema.md)
 - [Memory Schema](docs/memory-schema.md)
+- [Robustness Plan](docs/robustness-plan.md)
 - [Contributing](docs/contributing.md)
 
 ## Runtime Notes

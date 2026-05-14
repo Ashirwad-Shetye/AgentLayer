@@ -25,6 +25,16 @@ agentlayer run api-feature --task "Add audit trail for billing updates"
 agentlayer log
 ```
 
+For non-interactive scripts, pass the required decision and reason explicitly:
+
+```bash
+agentlayer log --auto \
+  --module src/dashboard \
+  --task "Dashboard analytics refresh strategy" \
+  --decision "Keep dashboard analytics on bounded polling." \
+  --reason "Provider webhook coverage is incomplete for all visible metrics."
+```
+
 5. Query shared memory:
 
 ```bash

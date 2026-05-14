@@ -12,19 +12,8 @@ import { SessionCache } from "./cache/session.js";
 import {
   buildQueryCacheKey,
   buildRetrievalQuery,
-  type QueryArguments,
 } from "./query-context.js";
-
-interface LogArguments {
-  decision: string;
-  reason: string;
-  module?: string;
-  rejected?: string;
-  tradeoffAccepted?: string;
-  open?: string;
-  reusablePattern?: string;
-  tags?: string[];
-}
+import { parseLogArguments, parseQueryArguments } from "./tool-arguments.js";
 
 function emptyResponse(): { content: Array<{ type: "text"; text: string }> } {
   return {
@@ -150,7 +139,16 @@ server.setRequestHandler(
   const paths = resolveProjectPaths(process.cwd());
 
   if (request.params.name === "agentlayer_query") {
-    const args = (request.params.arguments ?? {}) as QueryArguments;
+    const parsed = parseQueryArguments(request.params.arguments ?? {});
+
+    if (!parsed.value) {
+      return {
+        content: [{ type: "text", text: parsed.error ?? "Invalid query arguments." }],
+        isError: true,
+      };
+    }
+
+    const args = parsed.value;
     const intent = args.intent ?? "understand";
     const retrieval = buildRetrievalQuery({
       ...args,
@@ -187,7 +185,16 @@ server.setRequestHandler(
   }
 
   if (request.params.name === "agentlayer_log") {
-    const args = (request.params.arguments ?? {}) as LogArguments;
+    const parsed = parseLogArguments(request.params.arguments ?? {});
+
+    if (!parsed.value) {
+      return {
+        content: [{ type: "text", text: parsed.error ?? "Invalid log arguments." }],
+        isError: true,
+      };
+    }
+
+    const args = parsed.value;
     const result = writeMemoryEntry({
       memoryRepo: paths.memoryDir,
       frontmatter: {

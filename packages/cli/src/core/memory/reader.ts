@@ -8,6 +8,54 @@ import {
   type MemoryFrontmatter,
 } from "@ashirwad-shetye/agentlayer-shared";
 
+function normalizeFrontmatter(data: Record<string, unknown>): MemoryFrontmatter | null {
+  const dateValue = data["date"];
+  const date =
+    dateValue instanceof Date
+      ? dateValue.toISOString().slice(0, 10)
+      : typeof dateValue === "string"
+        ? dateValue
+        : undefined;
+  const moduleName = data["module"];
+  const task = data["task"];
+  const developer = data["developer"];
+  const agent = data["agent"];
+  const tags = data["tags"];
+
+  if (
+    !date ||
+    typeof moduleName !== "string" ||
+    typeof task !== "string" ||
+    typeof developer !== "string" ||
+    !(
+      agent === "claude-code" ||
+      agent === "codex" ||
+      agent === "cursor" ||
+      agent === "other"
+    )
+  ) {
+    return null;
+  }
+
+  return {
+    date,
+    module: moduleName,
+    task,
+    developer,
+    agent,
+    tags: Array.isArray(tags)
+      ? tags.filter((tag): tag is string => typeof tag === "string")
+      : [],
+    ...(typeof data["tokensUsed"] === "number"
+      ? { tokensUsed: data["tokensUsed"] }
+      : {}),
+    ...(typeof data["commit"] === "string" ? { commit: data["commit"] } : {}),
+    ...(typeof data["playbookUsed"] === "string"
+      ? { playbookUsed: data["playbookUsed"] }
+      : {}),
+  };
+}
+
 function tokenize(text: string): string[] {
   return text
     .toLowerCase()
@@ -41,9 +89,9 @@ export function parseMemoryFile(filePath: string): MemoryEntry | null {
   try {
     const raw = readFileSync(filePath, "utf-8");
     const { data, content } = matter(raw);
-    const frontmatter = data as MemoryFrontmatter;
+    const frontmatter = normalizeFrontmatter(data);
 
-    if (!frontmatter.date || !frontmatter.module || !frontmatter.developer) {
+    if (!frontmatter) {
       return null;
     }
 
@@ -103,7 +151,19 @@ export function loadAllMemories(memoryRepo: string): IndexedMemory[] {
       memories.push({
         ...parsed,
         bm25Tokens: tokenize(
-          `${parsed.decision} ${parsed.reason} ${parsed.frontmatter.tags.join(" ")}`,
+          [
+            parsed.frontmatter.module,
+            parsed.frontmatter.task,
+            parsed.frontmatter.developer,
+            parsed.frontmatter.agent,
+            parsed.frontmatter.tags.join(" "),
+            parsed.decision,
+            parsed.reason,
+            parsed.rejected ?? "",
+            parsed.tradeoffAccepted ?? "",
+            parsed.open ?? "",
+            parsed.reusablePattern ?? "",
+          ].join(" "),
         ),
         decayScore: computeDecayScore(parsed.frontmatter.date, existsSync(fullPath)),
       });
