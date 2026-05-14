@@ -48,7 +48,7 @@ Use this in `codex.config.json`:
 ## Available tools
 
 - `agentlayer_query`: fetches relevant project memory for a natural-language question plus optional retrieval context such as task, module, files, error, keywords, agent, and work phase.
-- `agentlayer_log`: records a decision and reason into project-local memory.
+- `agentlayer_log`: records a decision, reason, and optional implementation context into project-local memory.
 
 ## Prompt-Shaped Retrieval
 
@@ -119,6 +119,37 @@ Debugging query with current failure context:
   "keywords": ["retries", "delivery status", "idempotency"],
   "phase": "debugging",
   "intent": "debug"
+}
+```
+
+## `agentlayer_log` input shape
+
+Required:
+
+- `decision`: what changed or what was decided
+- `reason`: why this approach was chosen
+
+Optional:
+
+- `module`: primary module or scope
+- `rejected`: rejected alternative
+- `tradeoffAccepted`: accepted downside or implementation tradeoff
+- `open`: unresolved follow-up or remaining question
+- `reusablePattern`: pattern future agents or developers can reuse
+- `tags`: classification tags
+
+Example:
+
+```json
+{
+  "decision": "Dashboard analytics keeps polling instead of switching to webhooks",
+  "reason": "The provider does not emit reliable event coverage for every dashboard metric, and polling keeps refresh behavior deterministic for the UI.",
+  "module": "src/dashboard",
+  "rejected": "Webhook-only refresh for all analytics cards",
+  "tradeoffAccepted": "The dashboard may refresh a few seconds later than event-driven updates.",
+  "open": "Revisit webhooks if provider event coverage expands.",
+  "reusablePattern": "Use bounded polling for aggregate dashboard metrics when upstream events are incomplete.",
+  "tags": ["analytics", "dashboard", "polling"]
 }
 ```
 

@@ -150,7 +150,7 @@ Example `.claude/settings.json`:
 With that in place, the coding agent can call:
 
 - `agentlayer_query` before making architectural or module-level changes
-- `agentlayer_log` after making a meaningful decision worth preserving
+- `agentlayer_log` after making a meaningful decision worth preserving, including rejected alternatives, accepted tradeoffs, open follow-ups, and reusable patterns when applicable
 
 Better `agentlayer_query` examples for coding agents:
 

@@ -66,3 +66,7 @@ The product must keep team knowledge local, inspectable, and versioned in the us
 - Keep documentation updated when behavior, command names, schemas, or setup steps change.
 - When querying AgentLayer from a coding agent, prefer prompt-shaped retrieval over a raw short question. Include the current task, module, relevant files, and active error when those details materially improve retrieval.
 - Use AgentLayer retrieval before unfamiliar module changes, architectural work, sensitive refactors, debugging sessions, and code review decisions.
+- After meaningful implementation work, and before creating a commit or PR, call `agentlayer_log` when the work produced a durable decision, accepted tradeoff, rejected approach, bug root cause, or reusable pattern.
+- When logging, include the decision, reason, module, rejected alternative, accepted tradeoff, open follow-up, reusable pattern, and tags when applicable.
+- Do not log trivial mechanical edits such as formatting-only changes, import cleanup, typo fixes, generated-file updates, lockfile-only changes, or incomplete work.
+- When logging before a commit or PR, include the related `.agentlayer/memory` changes with the code changes so implementation history and project memory stay together.

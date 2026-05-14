@@ -20,6 +20,9 @@ interface LogArguments {
   reason: string;
   module?: string;
   rejected?: string;
+  tradeoffAccepted?: string;
+  open?: string;
+  reusablePattern?: string;
   tags?: string[];
 }
 
@@ -112,6 +115,18 @@ server.setRequestHandler(ListToolsRequestSchema, async () => ({
             type: "string",
             description: "Optional rejected alternative.",
           },
+          tradeoffAccepted: {
+            type: "string",
+            description: "Optional accepted downside or implementation tradeoff.",
+          },
+          open: {
+            type: "string",
+            description: "Optional unresolved follow-up or remaining question.",
+          },
+          reusablePattern: {
+            type: "string",
+            description: "Optional reusable pattern future agents or developers can apply.",
+          },
           tags: {
             type: "array",
             items: { type: "string" },
@@ -185,6 +200,13 @@ server.setRequestHandler(
         decision: args.decision,
         reason: args.reason,
         ...(args.rejected ? { rejected: args.rejected } : {}),
+        ...(args.tradeoffAccepted
+          ? { tradeoffAccepted: args.tradeoffAccepted }
+          : {}),
+        ...(args.open ? { open: args.open } : {}),
+        ...(args.reusablePattern
+          ? { reusablePattern: args.reusablePattern }
+          : {}),
       },
     });
 

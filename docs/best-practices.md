@@ -92,6 +92,7 @@ The agent should use:
 
 - `agentlayer_query` before implementation when prior context matters
 - `agentlayer_log` after implementation when a durable decision was made
+- `agentlayer_log` before creating a commit or PR when meaningful work produced durable project memory
 
 ## How Agents Should Query Memory
 
@@ -127,21 +128,32 @@ Add a rule like this to `AGENTS.md`, Codex instructions, or Claude project instr
 ```md
 ## AgentLayer Rule
 
-Before modifying an unfamiliar module or making a meaningful implementation decision, query AgentLayer for relevant project memory.
+Use AgentLayer as the project memory layer.
 
-After completing a meaningful implementation task, record the final decision in AgentLayer memory.
+Before changing unfamiliar modules, making architectural decisions, debugging non-obvious behavior, reviewing sensitive code, or starting a meaningful refactor, call `agentlayer_query` with prompt-shaped context:
+- direct question
+- current task or plan step
+- primary module
+- relevant file paths
+- current error when debugging
+- useful keywords
+- intent: `understand`, `extend`, `debug`, or `review`
 
-Each memory entry should include:
-- module
-- task
+After completing meaningful implementation work, and before creating a commit or PR, call `agentlayer_log` when the work produced a durable decision, tradeoff, rejected approach, bug root cause, or reusable pattern.
+
+Each memory log should include:
 - decision
 - reason
+- module
 - rejected alternative when applicable
 - tradeoff accepted when applicable
 - open follow-up when applicable
 - reusable pattern when applicable
+- tags
 
-Do not log trivial or purely mechanical edits.
+Do not log trivial or mechanical changes, including formatting-only edits, import cleanup, typo fixes, lockfile-only changes, generated-file updates, or incomplete work.
+
+When committing or opening a PR after logging, include the `.agentlayer/memory` changes with the code changes so project memory and implementation history stay together.
 ```
 
 ## Example Codex Instruction
@@ -149,13 +161,13 @@ Do not log trivial or purely mechanical edits.
 This shorter version works well in agent-specific instruction files:
 
 ```md
-Use AgentLayer as part of normal implementation workflow. Query project memory before changing unfamiliar code, and log meaningful decisions after completing planned implementation work. Prefer structured AgentLayer memory over leaving important reasoning only in chat history.
+Use AgentLayer as part of normal implementation workflow. Query project memory with prompt-shaped context before changing unfamiliar code. After meaningful implementation work, and before creating a commit or PR, log durable decisions to AgentLayer and include `.agentlayer/memory` changes with the related code changes.
 ```
 
 ## Example Claude Project Instruction
 
 ```md
-When working in this repository, check AgentLayer memory before making important changes in unfamiliar areas. After implementing a meaningful change, write the decision and reasoning back to AgentLayer memory.
+When working in this repository, check AgentLayer memory before making important changes in unfamiliar areas. After implementing a meaningful change, write the decision and reasoning back to AgentLayer memory before committing or opening a PR.
 ```
 
 ## Retrieval Expectations
